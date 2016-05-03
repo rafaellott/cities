@@ -12,9 +12,9 @@ class Cities(object):
         Convert Degree/Minute/Second to Decimal
         If one of DMS is 0, send it 0 [53d 0m 0s N]
         params:
-            d -> degree / m -> minute / s-> second
-            string "53d 20m 19s N"
-            string "6d 15m 37s W"
+            degree / minute / second / location North, South, West or East
+            string "53 20 19 N"
+            string "6 15 37 W"
         return:
             arrays of float
             53.3498
@@ -26,4 +26,21 @@ class Cities(object):
             raise ValueError("Invalid latitude value")
         if len(long_split) is not 4:
             raise ValueError("Invalid longitude value")
+        lat_dec = 0
+        long_dec = 0
+        try:
+            lat_dec = float(
+                float(lat_split[0]) +
+                float(lat_split[1])/60 +
+                float(lat_split[2])/3600
+            )
+            long_dec = float(
+                float(long_split[0]) +
+                float(long_split[1])/60 +
+                float(long_split[2])/3600
+            )
+            return [lat_dec, long_dec]
+        except Exception as e:
+            print(str(e))
+            raise Exception("Invalid int number for latitude/longitude")
         # Decimal Degrees = Degrees + minutes/60 + seconds/3600

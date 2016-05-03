@@ -10,12 +10,29 @@ class TestCities(unittest.TestCase):
         self.assertRaises(
             ValueError,
             self.cities.dms_to_decimal,
-            lat_degrees="53d 20m 19s",
-            long_degrees="6d 15m 37s W"
+            lat_degrees="53 20 19",
+            long_degrees="6 15 37 W"
         )
         self.assertRaises(
             ValueError,
             self.cities.dms_to_decimal,
-            lat_degrees="53d 20m 19s N",
-            long_degrees="6d 15m W"
+            lat_degrees="53 20 19 N",
+            long_degrees="6 15"
+        )
+
+    def test_only_int_numbers(self):
+        self.assertRaises(
+            Exception,
+            self.cities.dms_to_decimal,
+            lat_degrees="53 20 19 N",
+            long_degrees="6 15 2.4 W"
+        )
+
+    def test_right_numbers(self):
+        self.assertEquals(
+            self.cities.dms_to_decimal(
+                lat_degrees="53 20 19 N",
+                long_degrees="6 15 37 W"
+            ),
+            [53.3498, 6.2603]
         )
