@@ -59,3 +59,9 @@ class TestCities(unittest.TestCase):
             ),
             [-53.3497, -6.2603]
         )
+
+    def test_read_json_file(self):
+        self.assertIsInstance(
+            self.cities.read_json_file(),
+            dict
+        )
