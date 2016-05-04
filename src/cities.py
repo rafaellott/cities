@@ -29,18 +29,27 @@ class Cities(object):
         lat_dec = 0
         long_dec = 0
         try:
-            lat_dec = float(
-                float(lat_split[0]) +
-                float(lat_split[1])/60 +
-                float(lat_split[2])/3600
+            lat_dec = round(
+                float(
+                    float(lat_split[0]) +
+                    float(lat_split[1])/60 +
+                    float(lat_split[2])/3600
+                ),
+                4
             )
-            long_dec = float(
-                float(long_split[0]) +
-                float(long_split[1])/60 +
-                float(long_split[2])/3600
+            long_dec = round(
+                float(
+                    float(long_split[0]) +
+                    float(long_split[1])/60 +
+                    float(long_split[2])/3600
+                ),
+                4
             )
+            if lat_split[-1].upper() == 'S':
+                lat_dec = -lat_dec
+            if long_split[-1].upper() == 'W':
+                long_dec = -long_dec
             return [lat_dec, long_dec]
         except Exception as e:
-            print(str(e))
-            raise Exception("Invalid int number for latitude/longitude")
+            raise Exception(str(e) + "\nInvalid number for latitude/longitude")
         # Decimal Degrees = Degrees + minutes/60 + seconds/3600
