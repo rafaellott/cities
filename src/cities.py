@@ -2,6 +2,7 @@
 '''File containing the application's souce code.'''
 import json
 import os
+import sys
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -15,6 +16,11 @@ class Cities(object):
     ):
         if city_file[0] is not '/':
             BASE_DIR = os.path.dirname(__file__)
+            if not BASE_DIR:
+                BASE_DIR = (
+                    os.path.dirname(
+                        os.path.abspath(sys.modules['__main__'].__file__))
+                )
             city_file = BASE_DIR + '/' + city_file
         self.origin_city = origin_city
         self.city_file = city_file
@@ -72,3 +78,49 @@ class Cities(object):
         '''Read a json file and return it as dict.'''
         with open(self.city_file) as data_file:
             return json.load(data_file)
+
+    def distance_from_threhold(self, coordinates):
+        '''
+        calculate the great circle distance between two points
+        on the Earth (coordinates specified in decimal degrees)
+        '''
+        # convert decimal degrees to radians
+        lat1, lon1, lat2, lon2 = map(
+            radians,
+            [
+                self.origin_city[0], self.origin_city[1],
+                coordinates[0], coordinates[1]
+            ]
+        )
+
+        # Haversine formula
+        dif_lon = lon2 - lon1
+        dif_lat = lat2 - lat1
+        a = sin(dif_lat/2)**2 + cos(lat1) * cos(lat2) * sin(dif_lon/2)**2
+        c = 2 * asin(sqrt(a))
+
+        return True if round(6367 * c, 1) <= self.max_distance else False
+
+    def calculate_cities(self):
+        cities = self.read_json_file()
+        close_cities = []
+        for city, points in cities.iteritems():
+            if self.distance_from_threhold(
+                coordinates=[points.get('lat'), points.get('lon')]
+            ):
+                close_cities.append(city)
+        return sorted(close_cities)
+
+    def start(self):
+        text = (
+            "Cities in %skm range of Dublin" % self.max_distance
+        )
+        cities = self.calculate_cities()
+        text += ("There are %s cities near Dublin" % len(cities))
+        for city in cities:
+            text += (city.title())
+        return text
+
+if __name__ == "__main__":
+    cities_obj = Cities()
+    print(cities_obj.start())

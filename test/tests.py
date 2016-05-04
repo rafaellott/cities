@@ -1,5 +1,6 @@
 from src.cities import Cities
 import unittest
+import re
 
 
 class TestCities(unittest.TestCase):
@@ -64,4 +65,22 @@ class TestCities(unittest.TestCase):
         self.assertIsInstance(
             self.cities.read_json_file(),
             dict
+        )
+
+    def test_city_distance(self):
+        self.assertEquals(
+            self.cities.distance_from_threhold([51.883, -8.467]),
+            True
+        )
+
+    def test_closest_cities(self):
+        self.assertIsInstance(
+            self.cities.calculate_cities(),
+            list
+        )
+
+    def test_start_function(self):
+        self.assertMultiLineEqual(
+            self.cities.start()[:31],
+            "Cities in 500km range of Dublin"
         )
